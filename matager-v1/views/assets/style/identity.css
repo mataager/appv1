@@ -1,0 +1,392 @@
+/* =========================================================================
+   MATAGER — IDENTITY
+   Brand tokens + reusable primitives.
+   Load this BEFORE any page-specific stylesheet.
+   -------------------------------------------------------------------------
+   Change log
+     • Primary accent switched from Nebula purple (#A78BFA) → Signal blue (#3B82F6)
+     • All brand gradients now run blue → sky
+     • Solid-white button convention (white bg / black text) is the default
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   1. DESIGN TOKENS
+   ------------------------------------------------------------------------- */
+:root {
+    /* ── Brand · primary ───────────────────────────────────────────── */
+    --brand-blue: #3B82F6;
+    /* Replaces former Nebula purple          */
+    --brand-sky: #38BDF8;
+    /* Aurora — unchanged                     */
+
+    --brand-gradient: linear-gradient(90deg, #3B82F6, #38BDF8);
+    --brand-gradient-135: linear-gradient(135deg, #3B82F6, #38BDF8);
+    --grad-text-light: linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0.55) 100%);
+
+    /* ── Brand · blue tints ────────────────────────────────────────── */
+    --brand-tint-05: rgba(59, 130, 246, 0.05);
+    --brand-tint-08: rgba(59, 130, 246, 0.08);
+    --brand-tint-10: rgba(59, 130, 246, 0.10);
+    --brand-tint-12: rgba(59, 130, 246, 0.12);
+    --brand-tint-14: rgba(59, 130, 246, 0.14);
+    --brand-tint-16: rgba(59, 130, 246, 0.16);
+    --brand-tint-28: rgba(59, 130, 246, 0.28);
+    --brand-tint-35: rgba(59, 130, 246, 0.35);
+    --brand-tint-45: rgba(59, 130, 246, 0.45);
+    --brand-solid-90: rgba(59, 130, 246, 0.90);
+
+    /* ── Neutrals ─────────────────────────────────────────────────── */
+    --void: #0A0A0A;
+    --ink: #080A12;
+    --ink-solid: #06070C;
+    --paper: #FFFFFF;
+    --ash: #8A8A8A;
+    --dim: #5C5C5C;
+    --ghost: #4A4A4A;
+
+    /* ── Surfaces & borders ──────────────────────────────────────── */
+    --surface-1: rgba(255, 255, 255, 0.02);
+    --surface-2: rgba(255, 255, 255, 0.035);
+    --surface-3: rgba(255, 255, 255, 0.06);
+    --border-1: rgba(255, 255, 255, 0.06);
+    --border-2: rgba(255, 255, 255, 0.09);
+    --border-3: rgba(255, 255, 255, 0.14);
+
+    /* ── Semantic ─────────────────────────────────────────────────── */
+    --live: #4ADE80;
+    --alert: #F87171;
+    --warm: #F472B6;
+
+    /* ── Type ─────────────────────────────────────────────────────── */
+    --font-latin: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-arabic: 'IBM Plex Sans Arabic', 'Plus Jakarta Sans', sans-serif;
+
+    /* ── Radii ────────────────────────────────────────────────────── */
+    --r-pill: 999px;
+    --r-lg: 24px;
+    --r-md: 16px;
+    --r-sm: 8px;
+
+    /* ── Motion ───────────────────────────────────────────────────── */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-quad: cubic-bezier(0.4, 0, 1, 1);
+    --dur-fast: 200ms;
+    --dur-base: 300ms;
+    --dur-slow: 500ms;
+    --dur-reveal: 900ms;
+    --dur-display: 5500ms;
+
+    /* ── Layout ───────────────────────────────────────────────────── */
+    --max-content: 1200px;
+    --max-nav: 1400px;
+    --nav-height: 64px;
+
+    /* ── Legacy aliases (existing pages keep working) ─────────────── */
+    --bg-color: transparent;
+    --text-main: var(--paper);
+    --text-muted: var(--ash);
+    --text-dim: var(--dim);
+    --accent: var(--brand-blue);
+    --accent-2: var(--brand-sky);
+    --nav-bg: rgba(8, 10, 18, 0.72);
+    --nav-border: var(--border-1);
+    --card-bg: var(--surface-1);
+    --card-border: var(--border-1);
+    --card-bg-2: var(--surface-2);
+    --card-border-2: var(--border-2);
+}
+
+/* -------------------------------------------------------------------------
+   2. GLOBAL BASE
+   ------------------------------------------------------------------------- */
+::selection {
+    background: var(--brand-tint-35);
+}
+
+html[dir="rtl"] body {
+    font-family: var(--font-arabic);
+}
+
+/* -------------------------------------------------------------------------
+   3. TYPOGRAPHY PRIMITIVES
+   ------------------------------------------------------------------------- */
+.grad-text {
+    background: var(--grad-text-light);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+/* Gradient text clips to the text of its own element. When a heading is
+   split into word/char spans (reveal.js), the gradient must live on each
+   inner span — not the parent. */
+h1[data-reveal="words"],
+.sec-head h2[data-reveal="words"],
+.final-cta h2[data-reveal="words"] {
+    background: none;
+    -webkit-text-fill-color: initial;
+    color: inherit;
+}
+
+h1[data-reveal="words"] .mr-wi,
+.sec-head h2[data-reveal="words"] .mr-wi,
+.final-cta h2[data-reveal="words"] .mr-wi {
+    background: var(--grad-text-light);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+/* -------------------------------------------------------------------------
+   4. BUTTONS
+   ------------------------------------------------------------------------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+    border: 0;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: var(--r-pill);
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: var(--paper);
+    color: #000000;
+    padding: 10px 20px;
+    gap: 6px;
+}
+
+.btn-primary:hover {
+    background: #E5E5E5;
+    transform: scale(0.98);
+}
+
+.btn-secondary {
+    background: var(--surface-1);
+    color: var(--paper);
+    border: 1px solid var(--border-2);
+    padding: 12px 24px;
+    backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+    background: var(--surface-2);
+    border-color: var(--border-3);
+}
+
+.btn-ghost {
+    background: transparent;
+    color: var(--paper);
+    border: 1px solid var(--border-3);
+    padding: 14px 28px;
+    font-size: 15px;
+}
+
+.btn-ghost:hover {
+    background: var(--surface-1);
+    border-color: rgba(255, 255, 255, 0.24);
+}
+
+.btn-login {
+    color: var(--ash);
+    background: transparent;
+    padding: 10px 16px;
+}
+
+.btn-login:hover {
+    color: var(--paper);
+}
+
+.btn-lg {
+    padding: 14px 28px;
+    font-size: 15px;
+}
+
+/* -------------------------------------------------------------------------
+   5. LANGUAGE FAB
+   ------------------------------------------------------------------------- */
+.lang-fab {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--nav-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--nav-border);
+    color: var(--paper);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    transition: all var(--dur-base) var(--ease-out-expo);
+    flex-shrink: 0;
+}
+
+.lang-fab:hover {
+    background: rgba(255, 255, 255, 0.10);
+    transform: scale(1.05);
+}
+
+.lang-fab i {
+    font-size: 12px;
+    margin-bottom: 1px;
+}
+
+.lang-fab span {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* -------------------------------------------------------------------------
+   6. BADGE
+   ------------------------------------------------------------------------- */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--surface-1);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    padding: 6px 16px;
+    border-radius: var(--r-pill);
+    font-size: 13px;
+    font-weight: 500;
+    color: #CCCCCC;
+    margin-bottom: 24px;
+    width: auto;
+}
+
+.badge-highlight {
+    background: var(--brand-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    font-weight: 700;
+}
+
+/* -------------------------------------------------------------------------
+   7. SECTION SHELL
+   ------------------------------------------------------------------------- */
+.sec {
+    padding: 96px 5%;
+    max-width: var(--max-content);
+    margin: 0 auto;
+    width: 100%;
+    position: relative;
+}
+
+.sec-head {
+    text-align: center;
+    margin-bottom: 56px;
+    max-width: 720px;
+    margin-inline: auto;
+}
+
+.sec-head h2,
+.final-cta h2 {
+    font-size: clamp(30px, 4.6vw, 50px);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    margin-bottom: 18px;
+    background: var(--grad-text-light);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.sec-eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--brand-blue);
+    margin-bottom: 14px;
+}
+
+.sec-head p {
+    color: var(--ash);
+    font-size: 17px;
+    line-height: 1.6;
+}
+
+/* -------------------------------------------------------------------------
+   8. CARD (base pattern)
+   ------------------------------------------------------------------------- */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 32px;
+    transition: background var(--dur-base) ease, border-color var(--dur-base) ease;
+}
+
+.card:hover {
+    background: var(--card-bg-2);
+    border-color: var(--card-border-2);
+}
+
+/* -------------------------------------------------------------------------
+   9. BRAND FILL HELPERS
+   ------------------------------------------------------------------------- */
+.brand-fill-h {
+    background: var(--brand-gradient);
+}
+
+.brand-fill-diag {
+    background: var(--brand-gradient-135);
+}
+
+/* -------------------------------------------------------------------------
+   10. KEYFRAMES
+   ------------------------------------------------------------------------- */
+@keyframes mv-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 8px rgba(74, 222, 128, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+    }
+}
+
+/* -------------------------------------------------------------------------
+   11. REDUCED MOTION
+   ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+    }
+}
+
+/* -------------------------------------------------------------------------
+   12. RESPONSIVE SECTION SHELL
+   ------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+    .sec {
+        padding: 72px 5%;
+    }
+}
