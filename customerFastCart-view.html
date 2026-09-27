@@ -9,7 +9,7 @@
     <!-- Core CSS -->
     <link rel="stylesheet" href="./assets/style/bgroot.css">
     <link rel="stylesheet" href="./assets/style/identity.css">
-    <link rel="stylesheet" href="./assets/style/customerview.css">
+    <link rel="stylesheet" href="./assets/style/customerview-premium.css">
 
     <!-- Tailwind + Icons + Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,6 +19,8 @@
         rel="stylesheet">
 
     <!-- App scripts (dictionary added) -->
+    <!-- App scripts (dictionary added) -->
+    <script src="./assets/functions/consolelog.js"></script>
     <script src="./assets/functions/filterationbtns.js"></script>
     <script src="./assets/functions/notfic.js"></script>
     <script src="./assets/functions/nav.js"></script>
@@ -26,6 +28,8 @@
     <script src="./assets/functions/doc.js"></script>
     <script src="./assets/functions/dictionary.js"></script>
     <script src="./assets/functions/performance-optimizer.js"></script>
+    <script src="./assets/functions/catalog-logic.js" defer=""></script> <!-- NEW -->
+
 
 </head>
 
@@ -171,19 +175,23 @@
     <!-- ═══════════════════════════════════════════════════════════
        MAIN CONTENT
        ═══════════════════════════════════════════════════════════ -->
-    <main class="flex flex-col items-center" style="scale: 0.9;">
+    <main class="matager-customer-shell flex flex-col items-center" style="
+    /* width: max-content; */
+">
 
         <!-- ★ Top bar: Gender filter + Language button -->
 
 
         <!-- ═══════════ STORE HEADER ═══════════ -->
         <!-- ═══════════ STORE HERO (Cover + Profile) ═══════════ -->
-        <section class="store-hero-wrap w-full max-w-7xl mx-auto px-6 pt-4 pb-4">
+        <section class="" style="
+    width: -webkit-fill-available;
+">
             <article class="store-hero">
 
                 <!-- Cover image -->
                 <div class="store-hero-cover">
-                    <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600&q=80&auto=format&fit=crop"
+                    <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600&amp;q=80&amp;auto=format&amp;fit=crop"
                         alt="Peacock Store cover" loading="eager" decoding="async">
                 </div>
 
@@ -200,23 +208,31 @@
                     <div class="store-hero-info">
                         <div class="store-hero-name-row">
                             <h1 class="store-hero-name" data-i18n="storeName">Peacock Store</h1>
-                            <span class="store-hero-badge" data-i18n="badgeStorecategory">Clothing</span>
-                            <span class="store-hero-verified"><i class="bi bi-patch-check-fill"></i> Verified</span>
+                            <span class="store-hero-verified"><i class="bi bi-patch-check-fill"></i></span>
                         </div>
-                        <p class="store-hero-tagline" data-i18n="storeTagline">
-                            Premium products curated for the modern lifestyle
-                        </p>
+                        <p class="store-hero-tagline" data-i18n="storeTagline">Premium products curated for the modern
+                            lifestyle</p>
+                        <!-- ═══════════ STORE HERO STATS (FIXED) ═══════════ -->
                         <div class="store-hero-stats">
-                            <div class="store-hero-stat"><span>1,284</span><small
-                                    data-i18n="storeProducts">Products</small>
+                            <div class="store-hero-stat">
+                                <span class="stat-value">1,284</span>
+                                <span class="stat-label" data-i18n="storeProducts">1,284 products</span>
                             </div>
-                            <div class="store-hero-stat"><span>284</span><small
-                                    data-i18n="storeFollowers">Followers</small>
+                            <div class="store-hero-stat">
+                                <span class="stat-value">284</span>
+                                <span class="stat-label" data-i18n="storeFollowers">284 Followers</span>
                             </div>
-                            <div class="store-hero-stat"><span>4.9 ★</span><small data-i18n="storeRating">2.3k
-                                    reviews</small>
+                            <div class="store-hero-stat">
+                                <span class="stat-value">4.9 ★</span>
+                                <span class="stat-label" data-i18n="storeRating">4.9 ★ (2.3k)</span>
                             </div>
                         </div>
+                        <div class="store-hero-badge-area">
+                            <span class="store-hero-badge" data-i18n="badgeStorecategory">Men</span>
+                            <span class="store-hero-badge" data-i18n="badgeStorecategory">Clothing</span>
+                        </div>
+
+
                     </div>
 
                     <!-- Actions -->
@@ -239,31 +255,37 @@
 
         <!-- ═══════════ PRODUCTS ═══════════ -->
         <!-- ═══════════ PRODUCTS ═══════════ -->
-        <section id="products"
-            class="glass w-full max-w-7xl overflow-hidden  rounded-3xl backdrop-blur-xl transition-all duration-500">
-            <div class="w-full max-w-7xl z-10 p-6">
+        <section id="products" class="">
+            <div class="">
 
                 <!-- ★ Switcher area (Inside the glass panel, above the product header) -->
-                <div class="flex gap-4 mb-8 overflow-scroll">
-                    <button onclick="filterProducts('featured', this)"
-                        class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-2 active"
-                        data-i18n="catFeatured">Featured</button>
-                    <button onclick="filterProducts('best-seller', this)"
-                        class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-2"
-                        data-i18n="catBestSeller">Best Seller</button>
-                    <button onclick="filterProducts('limited-items', this)"
-                        class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-2"
-                        data-i18n="catLimited">Limited Items</button>
-                    <button onclick="filterProducts('sale-items', this)"
-                        class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-2"
-                        data-i18n="catSale">Sale Items</button>
-                    <button onclick="filterProducts('Collections-items', this)"
-                        class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-2"
-                        data-i18n="catCollections">Collections</button>
+                <div class="flex items-center gap-3 pb-4" style="display:flex;justify-content: space-between;">
+                    <div class="flex gap-4 mb-2 mt-2 pt-2 overflow-scroll" id="category-switcher">
+                        <button data-category="featured"
+                            class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-2 active"
+                            data-i18n="catFeatured">Featured</button>
+                        <button data-category="best-seller"
+                            class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-2"
+                            data-i18n="catBestSeller">Best Seller</button>
+                        <button data-category="limited-items"
+                            class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-2"
+                            data-i18n="catLimited">Limited Items</button>
+                        <button data-category="sale-items"
+                            class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-2"
+                            data-i18n="catSale">Sale Items</button>
+                        <button data-category="Collections-items"
+                            class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-2"
+                            data-i18n="catCollections">Collections</button>
+                    </div><span
+                        class="flex gap-4 mb-2 mt-2 pt-2 text-[10px] font-bold opacity-40 text-black dark:text-white mr-2"
+                        id="item-count">24
+                        Items</span>
+
+
                 </div>
 
                 <!-- Product Header Text -->
-                <div class="w-full max-w-7xl flex flex-col md:flex-row justify-between items-center mb-8 gap-8">
+                <div class="w-full max-w-7xl flex flex-col md:flex-row justify-between items-center mb-8 gap-8 hidden">
                     <div class="relative min-h-[100px] px-1 flex-1 w-full">
                         <div id="text-featured" class="text-content-wrapper active-text">
                             <h2 class="text-5xl md:text-7xl font-bold tracking-tighter leading-[0.85] mb-4"
@@ -298,27 +320,13 @@
                     </div>
                 </div>
 
-                <!-- Grid Toggles & Item Count -->
-                <div class="flex items-center gap-3 pb-4" style="display:flex;flex-direction:row-reverse;">
-                    <span class="text-[10px] font-bold opacity-40 text-black dark:text-white mr-2" id="item-count">24
-                        Items</span>
-                    <div class="flex bg-black/5 dark:bg-white/5 p-1 rounded-xl gap-1">
-                        <button onclick="setExploreGrid(1)"
-                            class="grid-toggle-btn w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white dark:hover:bg-white/10 transition-all text-sm"
-                            data-rows="1"><i class="bi bi-square-fill"></i></button>
-                        <button onclick="setExploreGrid(2)"
-                            class="grid-toggle-btn w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white dark:hover:bg-white/10 transition-all text-sm border active border-slate-500/60"
-                            data-rows="2"><i class="bi bi-grid-fill"></i></button>
-                        <button onclick="setExploreGrid(3)"
-                            class="grid-toggle-btn w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white dark:hover:bg-white/10 transition-all text-sm"
-                            data-rows="3"><i class="bi bi-grid-3x3-gap-fill"></i></button>
-                    </div>
-                </div>
+
 
                 <!-- Product Grid Stage -->
                 <div class="relative w-full product-grid-stage" style="height: 540px;">
+                    <!-- Featured Grid -->
                     <div id="grid-featured" class="scroll-grid-x visible-grid" data-rows="2" style="height: 540px;">
-                        <div class="product-card glass rounded-[1rem] group cursor-pointer overflow-hidden transition-all duration-500 relative bg-black/70"
+                        <div class="product-card glass rounded-[1rem] group cursor-pointer overflow-hidden brdr8 transition-all duration-500 relative bg-black/70"
                             onclick="event.stopPropagation(); openQuickLook('PROD_001')"
                             style="width:200px;height:250px;">
                             <div class="aspect-[4/5] overflow-hidden relative w-full h-full">
@@ -330,9 +338,9 @@
                                     50% off</div>
                                 <div
                                     class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-6 translate-y-12 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 z-40">
-                                    <h4 class="font-bold text-lg text-white leading-tight">Adidas classic t-shirt</h4>
-                                    <p class="text-[10px] mb-3 opacity-60 tracking-[0.2em] uppercase text-white">ADIDAS
-                                    </p>
+                                    <h4 class="font-medium text-[12px] text-white leading-tight">Adidas classic t-shirt
+                                    </h4>
+                                    <p class="text-[10px] mb-3 opacity-60 text-white">Adidas</p>
                                     <div class="flex items-center justify-between">
                                         <span class="text-[10px] font-bold text-white">EGP 4,500</span>
                                         <span class="text-[10px] text-emerald-400 font-bold">Free Delivery</span>
@@ -341,104 +349,25 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Best Seller Grid (Empty for demonstration) -->
                     <div id="grid-best-seller" class="scroll-grid-x hidden-grid" data-rows="2" style="height: 540px;">
                     </div>
+                    <!-- Sale Items Grid -->
                     <div id="grid-sale-items" class="scroll-grid-x hidden-grid" data-rows="2" style="height: 540px;">
                     </div>
+                    <!-- Limited Items Grid -->
                     <div id="grid-limited-items" class="scroll-grid-x hidden-grid" data-rows="2" style="height: 540px;">
                     </div>
+                    <!-- Collections Grid -->
                     <div id="grid-Collections-items" class="scroll-grid-x hidden-grid" data-rows="2"
                         style="height: 540px;">
                     </div>
                 </div>
 
-                <!-- Grid Configuration Script (Kept as is) -->
-                <script>
-                    const ROW_CONFIG = { 1: { w: 224, h: 280, containerH: 310 }, 2: { w: 200, h: 250, containerH: 540 }, 3: { w: 176, h: 220, containerH: 700 } };
-                    let currentRows = 2, currentCategory = 'featured', categoryTransitionTimer = null;
-
-                    function applyRowConfig(gridEl, rows) {
-                        if (!gridEl) return;
-                        const cfg = ROW_CONFIG[rows]; if (!cfg) return;
-                        gridEl.style.height = cfg.containerH + 'px';
-                        gridEl.querySelectorAll('.product-card').forEach(c => { c.style.width = cfg.w + 'px'; c.style.height = cfg.h + 'px'; });
-                        gridEl.dataset.rows = rows;
-                        const stage = gridEl.closest('.product-grid-stage');
-                        if (stage && gridEl.classList.contains('visible-grid')) stage.style.height = cfg.containerH + 'px';
-                    }
-
-                    function updateAllGrids(rows) {
-                        currentRows = rows;
-                        document.querySelectorAll('.scroll-grid-x').forEach(g => applyRowConfig(g, rows));
-                        const active = document.querySelector('.scroll-grid-x.visible-grid');
-                        const stage = active?.closest('.product-grid-stage');
-                        if (stage) stage.style.height = ROW_CONFIG[rows].containerH + 'px';
-                    }
-
-                    function setExploreGrid(rows) {
-                        const r = Math.min(3, Math.max(1, rows));
-                        if (r === currentRows) return;
-                        document.querySelectorAll('.grid-toggle-btn').forEach(btn => {
-                            btn.classList.remove('active', 'border-slate-500/60');
-                            if (parseInt(btn.dataset.rows, 10) === r) btn.classList.add('active', 'border-slate-500/60');
-                        });
-                        updateAllGrids(r);
-                    }
-
-                    function filterProducts(targetId, btn) {
-                        if (!targetId) return;
-                        if (categoryTransitionTimer) { clearTimeout(categoryTransitionTimer); categoryTransitionTimer = null; }
-                        document.querySelectorAll('.category-btn').forEach(b => { b.classList.remove('active'); });
-                        if (btn) { btn.classList.add('active'); }
-                        if (currentCategory === targetId) return;
-                        currentCategory = targetId;
-
-                        document.querySelectorAll('.text-content-wrapper').forEach(w => {
-                            if (w.classList.contains('active-text')) {
-                                w.classList.remove('active-text', 'hidden-text');
-                                w.classList.add('exit-text');
-                                setTimeout(() => { if (!w.classList.contains('active-text')) { w.classList.remove('exit-text'); w.classList.add('hidden-text'); } }, 500);
-                            }
-                        });
-                        const tText = document.getElementById(`text-${targetId}`);
-                        if (tText) { tText.classList.remove('hidden-text', 'exit-text'); void tText.offsetWidth; tText.classList.add('active-text'); }
-
-                        const currentGrid = document.querySelector('.scroll-grid-x.visible-grid');
-                        const targetGrid = document.getElementById(`grid-${targetId}`);
-                        if (!targetGrid || currentGrid === targetGrid) return;
-
-                        if (currentGrid) { currentGrid.classList.remove('visible-grid'); currentGrid.classList.add('grid-exit'); }
-                        document.querySelectorAll('.scroll-grid-x').forEach(g => { if (g !== currentGrid && g !== targetGrid) { g.classList.remove('visible-grid', 'grid-exit'); g.classList.add('hidden-grid'); } });
-                        targetGrid.classList.remove('hidden-grid', 'grid-exit', 'visible-grid');
-                        void targetGrid.offsetWidth;
-                        applyRowConfig(targetGrid, currentRows);
-                        targetGrid.classList.add('visible-grid');
-                        if (currentGrid) {
-                            categoryTransitionTimer = setTimeout(() => { currentGrid.classList.remove('grid-exit'); currentGrid.classList.add('hidden-grid'); categoryTransitionTimer = null; }, 520);
-                        }
-                    }
-
-                    document.addEventListener('DOMContentLoaded', () => {
-                        const defaultRows = 2;
-                        currentRows = defaultRows;
-                        document.querySelectorAll('.grid-toggle-btn').forEach(btn => {
-                            const r = parseInt(btn.dataset.rows, 10);
-                            if (r === defaultRows) btn.classList.add('active', 'border-slate-500/60');
-                            else btn.classList.remove('active', 'border-slate-500/60');
-                        });
-                        document.querySelectorAll('.scroll-grid-x').forEach(g => applyRowConfig(g, defaultRows));
-                        const active = document.querySelector('.scroll-grid-x.visible-grid');
-                        if (active) {
-                            const stage = active.closest('.product-grid-stage');
-                            if (stage) stage.style.height = ROW_CONFIG[defaultRows].containerH + 'px';
-                        }
-                    });
-                </script>
             </div>
         </section>
         <!-- ═══════════ FOOTER ═══════════ -->
-        <footer
-            class="glass w-full max-w-7xl mx-auto relative z-10 p-6 overflow-hidden rounded-3xl backdrop-blur-xl transition-all duration-500 mb-[70px] w-fit">
+        <footer class="">
             <div class="px-6 py-8 md:px-8 md:py-10">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div class="flex items-center gap-4">
@@ -475,10 +404,9 @@
                 </div>
             </div>
         </footer>
+
+
     </main>
-
-
-
 </body>
 
 </html>

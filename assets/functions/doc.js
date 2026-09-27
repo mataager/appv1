@@ -13,7 +13,7 @@
      1. CSS
      ═══════════════════════════════════════════════════════════════════ */
   const CSS = `
-.sticky-cta{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:9990;display:flex;flex-direction:column;width:min(560px,calc(100vw - 32px));height:min(82vh,720px);background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.025)),rgba(8,8,10,.62);backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);border:1px solid rgba(255,255,255,.09);box-shadow:0 24px 60px -18px rgba(0,0,0,.75),0 4px 16px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.11);overflow:hidden;clip-path:inset(calc(100% - 60px) 0 0 0 round 12px);transform:translate3d(-50%,calc(100% + 40px),0);opacity:0;pointer-events:none;contain:layout paint style;will-change:clip-path,transform,opacity;transition:clip-path .36s cubic-bezier(.16,1,.3,1),transform .36s cubic-bezier(.16,1,.3,1),opacity .18s ease}
+.sticky-cta{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:9990;display:flex;flex-direction:column;width:min(400px,calc(100vw - 32px));height:min(82vh,720px);background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.025)),rgba(8,8,10,.62);backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);border:1px solid rgba(255,255,255,.09);box-shadow:0 24px 60px -18px rgba(0,0,0,.75),0 4px 16px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.11);overflow:hidden;clip-path:inset(calc(100% - 60px) 0 0 0 round 12px);transform:translate3d(-50%,calc(100% + 40px),0);opacity:0;pointer-events:none;contain:layout paint style;will-change:clip-path,transform,opacity;transition:clip-path .36s cubic-bezier(.16,1,.3,1),transform .36s cubic-bezier(.16,1,.3,1),opacity .18s ease}
 .sticky-cta.is-visible{transform:translate3d(-50%,0,0);opacity:1;pointer-events:auto}
 .sticky-cta.is-expanded{clip-path:inset(0 0 0 0 round 28px)}
 .sticky-cta-panel{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;opacity:0;transform:translate3d(0,8px,0);pointer-events:none;transition:opacity .24s ease,transform .3s cubic-bezier(.16,1,.3,1);backface-visibility:hidden}
@@ -36,7 +36,7 @@
 .mv-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.18);animation:pulseDot 2s ease-in-out infinite}
 @keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.45}}
 .mini-label{display:block;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);line-height:1}
-.hub-ad{position:relative;display:flex;align-items:center;gap:8px;height:32px;padding:0 11px;border-radius:11px;overflow:hidden;background:linear-gradient(100deg,rgba(59,130,246,.16),rgba(168,85,247,.14) 50%,rgba(236,72,153,.12));border:1px solid rgba(255,255,255,.09)}
+.hub-ad{position:relative;display:flex;align-items:center;gap:8px;height:32px;padding:0 11px;border-radius:11px;overflow:hidden;border: 1px solid rgba(255, 255, 255, .08);background: rgba(255, 255, 255, .035);color: #cfcfcf;}
 .hub-ad-icon{flex:0 0 auto;font-size:11px;color:#93c5fd;opacity:.9}
 .hub-ad-viewport{position:relative;flex:1 1 auto;height:100%;overflow:hidden}
 .hub-ad-msg{position:absolute;inset:0;display:flex;align-items:center;font-size:10px;font-weight:600;color:rgba(255,255,255,.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;animation:adCycle 15s cubic-bezier(.16,1,.3,1) infinite}
@@ -48,9 +48,8 @@
 .cta-tile{position:relative;display:flex;align-items:center;gap:6px;padding:7px 8px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);color:#cfcfcf;font-family:inherit;font-size:9.5px;font-weight:600;letter-spacing:.01em;cursor:pointer;overflow:hidden;text-align:left;transition:background .2s,border-color .2s,color .2s,transform .16s}
 .cta-tile:hover{background:rgba(59,130,246,.09);border-color:rgba(59,130,246,.28);color:#fff}
 .cta-tile:active{transform:scale(.96)}
-.cta-tile-ico{width:20px;height:20px;border-radius:6px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .22s,transform .28s cubic-bezier(.16,1,.3,1)}
+.cta-tile-ico{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .22s,transform .28s cubic-bezier(.16,1,.3,1)}
 .cta-tile-ico i{font-size:11px;color:#60a5fa}
-.cta-tile:hover .cta-tile-ico{background:rgba(59,130,246,.18);transform:scale(1.06)}
 .cta-tile-label{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cta-tile-badge{flex-shrink:0;min-width:15px;height:15px;padding:0 4px;border-radius:999px;background:rgba(239,68,68,.9);color:#fff;font-size:8px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;line-height:1}
 .cta-tile-badge.is-hidden{display:none}
@@ -302,7 +301,7 @@ body.sticky-cta-open{overflow:hidden}
 .orders-list::-webkit-scrollbar{display:none}
 .order-card{border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);overflow:hidden;transition:border-color .24s,background .24s,box-shadow .24s}
 .order-card:hover{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.055)}
-.order-card.is-open{border-color:rgba(59,130,246,.32);background:rgba(59,130,246,.05);box-shadow:0 0 0 1px rgba(59,130,246,.1) inset}
+.order-card.is-open{box-shadow:0 0 0 1px rgba(59,130,246,.1) inset}
 .order-card-head{position:relative;display:block;width:100%;padding:12px;border:none;background:none;font-family:inherit;text-align:left;cursor:pointer}
 .order-card-head-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .order-status{font-size:8.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:6px}
@@ -473,7 +472,7 @@ body.sticky-cta-open{overflow:hidden}
 .auth-brand-ico{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;box-shadow:0 12px 32px -12px rgba(59,130,246,.6)}
 .auth-brand-title{font-size:16px;font-weight:700;color:#fff;letter-spacing:-.01em;margin:0}
 .auth-brand-sub{font-size:10.5px;color:rgba(255,255,255,.45);margin:0}
-.auth-form{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08)}
+.auth-form{display:flex;flex-direction:column;gap:10px;padding:14px;}
 .auth-field{display:flex;flex-direction:column;gap:4px}
 .auth-label{font-size:8.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45)}
 .auth-input-wrap{position:relative}
@@ -1186,7 +1185,14 @@ body.sticky-cta-open{overflow:hidden}
       <span class="view-eyebrow">Product</span>
       <h4 class="view-title">Quick look</h4>
     </div>
-    <span class="mini-pill" id="qlStockPill"><span class="mv-dot"></span>In stock</span>
+    <div class="line-badges">
+          <span class="mini-pill" id="qlStockPill">
+          <span class="mv-dot">
+          </span>Free Delivery</span>
+          <span class="pd-badges-sep"></span>
+          <span class="mini-pill" id="qlStockPill"><span class="mv-dot">
+          </span>In stock</span>
+        </div>
   </header>
   <div id="quickLookMount"></div>
 </div>`;
@@ -1223,11 +1229,6 @@ body.sticky-cta-open{overflow:hidden}
           <span class="pd-price">EGP ${p.price.toLocaleString()}</span>
           ${p.oldPrice ? `<span class="pd-old-price">EGP ${p.oldPrice.toLocaleString()}</span>` : ""}
           ${p.discount ? `<span class="pd-discount">-${p.discount}%</span>` : ""}
-        </div>
-        <div class="pd-badges">
-          <span><i class="bi bi-check-circle-fill"></i> Free Delivery</span>
-          <span class="pd-badges-sep"></span>
-          <span class="${stockClass}"><i class="bi bi-check-circle-fill"></i> ${stockText}</span>
         </div>
         <div class="pd-options">
           <div class="filter" data-filter="color">
@@ -1835,11 +1836,6 @@ body.sticky-cta-open{overflow:hidden}
     </div>
   </header>
   <div class="auth-wrap">
-    <div class="auth-brand">
-      <div class="auth-brand-ico"><i class="bi bi-person-fill"></i></div>
-      <h5 class="auth-brand-title">Welcome to Peacock</h5>
-      <p class="auth-brand-sub">Sign in to track orders, save items and check out faster.</p>
-    </div>
     <form class="auth-form" id="signinForm" onsubmit="return handleSignIn(event)">
       <div class="auth-error" id="signinError"></div>
       <div class="auth-field">
@@ -1893,11 +1889,6 @@ body.sticky-cta-open{overflow:hidden}
     </div>
   </header>
   <div class="auth-wrap">
-    <div class="auth-brand">
-      <div class="auth-brand-ico"><i class="bi bi-stars"></i></div>
-      <h5 class="auth-brand-title">Join Peacock Store</h5>
-      <p class="auth-brand-sub">Save favorites, get restock alerts and exclusive promo codes.</p>
-    </div>
     <form class="auth-form" id="signupForm" onsubmit="return handleSignUp(event)">
       <div class="auth-error" id="signupError"></div>
       <div class="auth-field">
