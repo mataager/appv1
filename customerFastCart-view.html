@@ -2,7 +2,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Matager — Commerce, without the noise.</title>
     <link rel="icon" type="image/png" href="./favicon/favico.png">
 
@@ -28,7 +28,8 @@
     <script src="./assets/functions/doc.js"></script>
     <script src="./assets/functions/dictionary.js"></script>
     <script src="./assets/functions/performance-optimizer.js"></script>
-    <script src="./assets/functions/catalog-logic.js" defer=""></script> <!-- NEW -->
+    <!-- <script src="./assets/functions/catalog-logic.js" defer=""></script>  -->
+    <script src="./assets/functions/dropdop.js"></script>
 
 
 </head>
@@ -261,6 +262,10 @@
                 <!-- ★ Switcher area (Inside the glass panel, above the product header) -->
                 <div class="flex items-center gap-3 pb-4" style="display:flex;justify-content: space-between;">
                     <div class="flex gap-4 mb-2 mt-2 pt-2 overflow-scroll" id="category-switcher">
+                        <div class="dropdop" data-optnum="3" data-selected="Limited Items" data-type="standard"
+                            data-showcount="true" data-size="sm" data-style="outline"
+                            data-options="Limited Items,Clearance,Last Chance,Exclusive">
+                        </div>
                         <button data-category="featured"
                             class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-2 active"
                             data-i18n="catFeatured">Featured</button>

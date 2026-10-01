@@ -393,3 +393,12 @@ h1[data-reveal="words"] .mr-wi,
     }
 }
 
+
+.mesh-gradient {
+    background-color: #0f0f14;
+    background-image:
+        radial-gradient(circle at 43.8% 63.9%, #2e0d32, transparent 50%),
+        radial-gradient(circle at 65.1% 62.6%, #1bddd6, transparent 50%),
+        radial-gradient(circle at 57.3% 48.5%, #c0b49a, transparent 50%);
+    /* filter: blur(100px); */
+}

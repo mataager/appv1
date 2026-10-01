@@ -1,7 +1,17 @@
 /* =========================================================================
-   PEACOCK STORE — STICKY CTA
+   PEACOCK STORE — STICKY CTA  (v2)
    Single-call initializer. Injects CSS + DOM and wires up every controller.
    Usage:  initStickyCTA();   // auto-runs on DOM ready if not called manually
+
+   v2 additions (kept additive, core untouched):
+     • #17171a shell with rounder corners
+     • Bar buttons sized to fit bar height
+     • Static platform logo circle (left of bar) that swaps with back button
+     • Notifications docked onto the bar (blue-lined strip)
+     • Fullscreen image expander (lightbox)
+     • Gallery image dots (one per product image)
+     • Nav stack — back returns to actual origin (gallery → product → gallery)
+     • Categories view + filtered gallery
    ========================================================================= */
 (function () {
   "use strict";
@@ -13,12 +23,12 @@
      1. CSS
      ═══════════════════════════════════════════════════════════════════ */
   const CSS = `
-.sticky-cta{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:9990;display:flex;flex-direction:column;width:min(400px,calc(100vw - 32px));height:min(82vh,720px);background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.025)),rgba(8,8,10,.62);backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);border:1px solid rgba(255,255,255,.09);box-shadow:0 24px 60px -18px rgba(0,0,0,.75),0 4px 16px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.11);overflow:hidden;clip-path:inset(calc(100% - 60px) 0 0 0 round 12px);transform:translate3d(-50%,calc(100% + 40px),0);opacity:0;pointer-events:none;contain:layout paint style;will-change:clip-path,transform,opacity;transition:clip-path .36s cubic-bezier(.16,1,.3,1),transform .36s cubic-bezier(.16,1,.3,1),opacity .18s ease}
+.sticky-cta{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:9990;display:flex;flex-direction:column;width:min(400px,calc(100vw - 32px));height:min(82vh,720px);background:#232323;backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);border-radius:25px;overflow:hidden;clip-path:inset(calc(100% - 60px) 0 0 0 round 35px);transform:translate3d(-50%,calc(100% + 40px),0);opacity:0;pointer-events:none;contain:layout paint style;will-change:clip-path,transform,opacity;transition:clip-path .36s cubic-bezier(.16,1,.3,1),transform .36s cubic-bezier(.16,1,.3,1),opacity .18s ease}
 .sticky-cta.is-visible{transform:translate3d(-50%,0,0);opacity:1;pointer-events:auto}
-.sticky-cta.is-expanded{clip-path:inset(0 0 0 0 round 28px)}
+.sticky-cta.is-expanded{clip-path:inset(0 0 0 0 round 34px)}
 .sticky-cta-panel{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;opacity:0;transform:translate3d(0,8px,0);pointer-events:none;transition:opacity .24s ease,transform .3s cubic-bezier(.16,1,.3,1);backface-visibility:hidden}
 .sticky-cta.is-expanded .sticky-cta-panel{opacity:1;transform:translate3d(0,0,0);pointer-events:auto;transition-delay:.04s,.04s}
-.sticky-cta-panel-inner{position:absolute;inset:0;transform:translateZ(0)}
+.sticky-cta-panel-inner{position:absolute;background: #17171a;border-bottom: 1px solid #4b4b4b;inset:0;transform:translateZ(0)}
 .sticky-view{position:absolute;inset:0;padding:16px 16px 14px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:none;-ms-overflow-style:none;contain:layout paint style;opacity:0;transform:translate3d(16px,0,0);pointer-events:none;transition:opacity .26s cubic-bezier(.16,1,.3,1),transform .34s cubic-bezier(.16,1,.3,1);backface-visibility:hidden}
 .sticky-view::-webkit-scrollbar{width:0;height:0;display:none}
 .sticky-view.is-active{opacity:1;transform:translate3d(0,0,0);pointer-events:auto;will-change:opacity,transform}
@@ -36,7 +46,7 @@
 .mv-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.18);animation:pulseDot 2s ease-in-out infinite}
 @keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.45}}
 .mini-label{display:block;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);line-height:1}
-.hub-ad{position:relative;display:flex;align-items:center;gap:8px;height:32px;padding:0 11px;border-radius:11px;overflow:hidden;border: 1px solid rgba(255, 255, 255, .08);background: rgba(255, 255, 255, .035);color: #cfcfcf;}
+.hub-ad{position:relative;display:flex;align-items:center;gap:8px;height:32px;padding:0 11px;border-radius:11px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);color:#cfcfcf}
 .hub-ad-icon{flex:0 0 auto;font-size:11px;color:#93c5fd;opacity:.9}
 .hub-ad-viewport{position:relative;flex:1 1 auto;height:100%;overflow:hidden}
 .hub-ad-msg{position:absolute;inset:0;display:flex;align-items:center;font-size:10px;font-weight:600;color:rgba(255,255,255,.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;animation:adCycle 15s cubic-bezier(.16,1,.3,1) infinite}
@@ -45,11 +55,11 @@
 .hub-ad-msg:nth-child(3){animation-delay:10s}
 @keyframes adCycle{0%{opacity:0;transform:translateY(8px)}4%{opacity:1;transform:translateY(0)}29%{opacity:1;transform:translateY(0)}33%{opacity:0;transform:translateY(-8px)}100%{opacity:0;transform:translateY(-8px)}}
 .cta-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
-.cta-tile{position:relative;display:flex;align-items:center;gap:6px;padding:7px 8px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);color:#cfcfcf;font-family:inherit;font-size:9.5px;font-weight:600;letter-spacing:.01em;cursor:pointer;overflow:hidden;text-align:left;transition:background .2s,border-color .2s,color .2s,transform .16s}
+.cta-tile{position:relative;display:flex;align-items:center;gap:6px;height:38px;padding:0 9px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);color:#cfcfcf;font-family:inherit;font-size:9.5px;font-weight:600;letter-spacing:.01em;cursor:pointer;overflow:hidden;text-align:left;transition:background .2s,border-color .2s,color .2s,transform .16s}
 .cta-tile:hover{background:rgba(59,130,246,.09);border-color:rgba(59,130,246,.28);color:#fff}
 .cta-tile:active{transform:scale(.96)}
-.cta-tile-ico{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .22s,transform .28s cubic-bezier(.16,1,.3,1)}
-.cta-tile-ico i{font-size:11px;color:#60a5fa}
+.cta-tile-ico{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .22s,transform .28s cubic-bezier(.16,1,.3,1)}
+.cta-tile-ico i{font-size:11.5px;color:#60a5fa}
 .cta-tile-label{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cta-tile-badge{flex-shrink:0;min-width:15px;height:15px;padding:0 4px;border-radius:999px;background:rgba(239,68,68,.9);color:#fff;font-size:8px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;line-height:1}
 .cta-tile-badge.is-hidden{display:none}
@@ -70,8 +80,8 @@
 .promo-chip:active{transform:scale(.96)}
 .promo-chip-code{font-size:9.5px;font-weight:800;letter-spacing:.05em;line-height:1.1}
 .promo-chip-desc{font-size:7.5px;font-weight:600;opacity:.65;letter-spacing:.03em;line-height:1.1}
-.sticky-cta-bar{position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:8px;height:60px;box-sizing:border-box;background:linear-gradient(180deg,rgba(8,8,10,.35),rgba(8,8,10,.65));box-shadow:0 -1px 0 rgba(255,255,255,.06) inset}
-.sticky-cta-primary{flex:1 1 auto;justify-content:center;padding:12px 22px;background:#fff!important;color:#000!important;border:1px solid rgba(0,0,0,.1)!important;display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;border-radius:999px;text-decoration:none;transition:background .2s}
+.sticky-cta-bar{position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:8px;height:60px;box-sizing:border-box}
+.sticky-cta-primary{flex:1 1 auto;justify-content:center;height:44px;padding:0 22px;background:#fff!important;color:#000!important;border:1px solid rgba(0,0,0,.1)!important;display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;border-radius:999px;text-decoration:none;transition:background .2s}
 .sticky-cta-primary:hover{background:#f3f4f6!important}
 .sticky-cta-primary i{font-size:16px}
 .sticky-cta-back,.sticky-cta-toggle{flex:0 0 44px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,border-color .2s,transform .34s cubic-bezier(.16,1,.3,1),opacity .25s,width .3s cubic-bezier(.16,1,.3,1),flex-basis .3s cubic-bezier(.16,1,.3,1)}
@@ -85,7 +95,7 @@
 body.sticky-cta-open{overflow:hidden}
 .sticky-cta-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:9989;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s cubic-bezier(.16,1,.3,1),visibility .3s}
 .sticky-cta-overlay.is-visible{opacity:1;visibility:visible;pointer-events:auto}
-.cta-alert-zone{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:9995;width:min(440px,calc(100vw - 32px));display:flex;flex-direction:column;align-items:stretch;gap:8px;pointer-events:none;transition:bottom .38s cubic-bezier(.16,1,.3,1),width .38s cubic-bezier(.16,1,.3,1)}
+.cta-alert-zone{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:9995;width:min(400px,calc(100vw - 32px));display:flex;flex-direction:column;align-items:stretch;gap:8px;pointer-events:none;transition:bottom .38s cubic-bezier(.16,1,.3,1),width .38s cubic-bezier(.16,1,.3,1)}
 .cta-toast{position:relative;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03)),rgba(12,12,15,.92);backdrop-filter:blur(24px) saturate(140%);-webkit-backdrop-filter:blur(24px) saturate(140%);border:1px solid rgba(255,255,255,.1);box-shadow:0 18px 44px -16px rgba(0,0,0,.8),0 2px 10px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.08);overflow:hidden;pointer-events:auto;opacity:0;transform:translateY(14px) scale(.96);transition:opacity .28s cubic-bezier(.16,1,.3,1),transform .34s cubic-bezier(.16,1,.3,1)}
 .cta-toast.is-in{opacity:1;transform:translateY(0) scale(1)}
 .cta-toast.is-out{opacity:0;transform:translateY(-8px) scale(.96)}
@@ -102,7 +112,7 @@ body.sticky-cta-open{overflow:hidden}
 .cta-toast-progress{position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--tone,#94a3b8);opacity:.55;transform-origin:left center;animation:toastProgress 5.2s linear forwards}
 @keyframes toastProgress{from{transform:scaleX(1)}to{transform:scaleX(0)}}
 .filter{position:relative}
-.filter-trigger{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);color:#e5e7eb;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,border-color .2s;white-space:nowrap}
+.filter-trigger{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:6px 10px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);color:#e5e7eb;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,border-color .2s;white-space:nowrap}
 .filter-trigger:hover{background:rgba(255,255,255,.09)}
 .filter-trigger>i{font-size:10px;opacity:.5;transition:transform .28s}
 .filter-trigger[aria-expanded="true"]>i{transform:rotate(180deg)}
@@ -163,7 +173,7 @@ body.sticky-cta-open{overflow:hidden}
 .pd-whatsapp-arrow{font-size:11px;color:rgba(255,255,255,.3);transition:color .2s}
 .pd-whatsapp:hover .pd-whatsapp-arrow{color:#fff}
 .pd-actions{display:flex;align-items:center;gap:6px}
-.pd-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 12px;border-radius:11px;border:1px solid transparent;font-family:inherit;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:background .2s,border-color .2s,transform .14s,color .2s;white-space:nowrap}
+.pd-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:34px;padding:9px 12px;border-radius:11px;border:1px solid transparent;font-family:inherit;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:background .2s,border-color .2s,transform .14s,color .2s;white-space:nowrap}
 .pd-btn:active{transform:scale(.96)}
 .pd-btn i{font-size:12px}
 .pd-btn--primary{flex:1 1 0;min-width:0;background:#fff;color:#000;border-color:rgba(0,0,0,.1)}
@@ -472,7 +482,7 @@ body.sticky-cta-open{overflow:hidden}
 .auth-brand-ico{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;box-shadow:0 12px 32px -12px rgba(59,130,246,.6)}
 .auth-brand-title{font-size:16px;font-weight:700;color:#fff;letter-spacing:-.01em;margin:0}
 .auth-brand-sub{font-size:10.5px;color:rgba(255,255,255,.45);margin:0}
-.auth-form{display:flex;flex-direction:column;gap:10px;padding:14px;}
+.auth-form{display:flex;flex-direction:column;gap:10px;padding:14px}
 .auth-field{display:flex;flex-direction:column;gap:4px}
 .auth-label{font-size:8.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45)}
 .auth-input-wrap{position:relative}
@@ -522,10 +532,34 @@ body.sticky-cta-open{overflow:hidden}
 .gallery-brand{font-size:8px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#60a5fa}
 .gallery-title{margin:0;font-size:11px;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .gallery-price{font-size:11px;font-weight:800;color:#fff;margin-top:2px}
-@media (max-width:480px){.sticky-cta{bottom:calc(14px + env(safe-area-inset-bottom,0px));backdrop-filter:blur(12px) saturate(120%);-webkit-backdrop-filter:blur(12px) saturate(120%)}.sticky-view{padding:14px 13px 12px}.cta-tile{padding:6px 7px;font-size:9px}.cta-tile-ico{width:18px;height:18px}.cta-tile-ico i{font-size:10px}.view-title{font-size:12.5px}.cta-alert-zone{width:calc(100vw - 26px)}.order-grid{grid-template-columns:1fr}.gallery-grid{grid-template-columns:repeat(2,1fr);gap:6px}}
-@media (max-width:380px){.sticky-cta{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}.cta-tile-label{display:none}.cta-tile{justify-content:center}}
-@media (prefers-reduced-motion:reduce){.sticky-cta,.sticky-cta-panel,.sticky-view,.sticky-cta-toggle,.sticky-cta-back,.cta-tile,.cta-tile-ico,.sticky-cta-overlay,.cta-alert-zone,.cta-toast,.address-card,.payment-option,.smooth-dropdown,.order-details,.order-chevron,.pd-review-form,.pd-review-text-wrap,.hub-ad-msg,.mv-dot{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
-@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.sticky-cta{background:rgba(8,8,10,.96)}.cta-toast{background:rgba(12,12,15,.98)}.filter-dropdown{background:rgba(14,14,17,1)}.sticky-cta-overlay{background:rgba(0,0,0,.75)}.gallery-fav{background:rgba(0,0,0,.8)}}
+/* ── v2 additions ── */
+.pd-dots{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 0 2px;flex-wrap:wrap}
+.pd-dot{width:6px;height:6px;border-radius:999px;padding:0;border:none;cursor:pointer;background:rgba(255,255,255,.22);transition:width .28s cubic-bezier(.16,1,.3,1),background .22s,transform .16s}
+.pd-dot:hover{background:rgba(255,255,255,.45)}
+.pd-dot:active{transform:scale(.85)}
+.pd-dot.is-active{width:20px;background:#fff}
+.pd-gallery-expand{position:absolute;top:8px;left:8px;z-index:2;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;transition:background .2s,transform .14s}
+.pd-gallery-expand:hover{background:rgba(0,0,0,.75)}
+.pd-gallery-expand:active{transform:scale(.9)}
+.pd-lightbox{position:fixed;inset:0;z-index:10050;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(6,6,8,.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .28s ease,visibility .28s}
+.pd-lightbox.is-open{opacity:1;visibility:visible;pointer-events:auto}
+.pd-lightbox-frame{position:relative;width:min(680px,calc(100vw - 28px));height:min(72vh,620px);border-radius:22px;overflow:hidden;background:#111114;border:1px solid rgba(255,255,255,.10);box-shadow:0 30px 80px -20px rgba(0,0,0,.9)}
+.pd-lightbox-track{display:flex;height:100%;width:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.pd-lightbox-track::-webkit-scrollbar{display:none}
+.pd-lightbox-slide{width:100%;height:100%;object-fit:contain;flex-shrink:0;scroll-snap-align:center;background:#0d0d10}
+.pd-lightbox-counter{position:absolute;right:10px;bottom:10px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);color:rgba(255,255,255,.85);font-size:9px;font-weight:700}
+.pd-lightbox-close{position:absolute;top:calc(18px + env(safe-area-inset-top,0px));right:18px;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.07);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:background .2s,transform .14s}
+.pd-lightbox-close:hover{background:rgba(255,255,255,.16)}
+.pd-lightbox-close:active{transform:scale(.93)}
+.gallery-filterbar{display:flex;gap:6px;margin-bottom:9px;min-height:0}
+.gallery-chip{display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border-radius:999px;background:rgba(59,130,246,.14);border:1px solid rgba(59,130,246,.30);color:#93c5fd;font-family:inherit;font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .2s,border-color .2s}
+.gallery-chip:hover{background:rgba(59,130,246,.24);border-color:rgba(59,130,246,.5)}
+.gallery-chip i{font-size:10px;opacity:.85}
+.category-count{position:absolute;left:8px;bottom:8px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);color:#fff;font-size:9px;font-weight:800;letter-spacing:.03em}
+@media (max-width:480px){.sticky-cta{bottom:calc(14px + env(safe-area-inset-bottom,0px));backdrop-filter:blur(12px) saturate(120%);-webkit-backdrop-filter:blur(12px) saturate(120%)}.sticky-view{padding:14px 13px 12px}.cta-tile{height:34px;padding:0 7px;font-size:9px}.cta-tile-ico{width:20px;height:20px}.cta-tile-ico i{font-size:10.5px}.view-title{font-size:12.5px}.cta-alert-zone{width:calc(100vw - 26px)}.order-grid{grid-template-columns:1fr}.gallery-grid{grid-template-columns:repeat(2,1fr);gap:6px}.pd-lightbox-frame{height:min(64vh,520px)}
+@media (max-width:380px){.sticky-cta{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}.cta-tile{padding:0 5px}.cta-tile-label{display:none}.cta-tile{justify-content:center}}
+@media (prefers-reduced-motion:reduce){.sticky-cta,.sticky-cta-panel,.sticky-view,.sticky-cta-toggle,.sticky-cta-back,.cta-tile,.cta-tile-ico,.sticky-cta-overlay,.cta-alert-zone,.cta-toast,.address-card,.payment-option,.smooth-dropdown,.order-details,.order-chevron,.pd-review-form,.pd-review-text-wrap,.hub-ad-msg,.mv-dot,.pd-dot,.sticky-cta-logo,.pd-lightbox{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.sticky-cta{background:#17171a}.cta-toast{background:rgba(12,12,15,.98)}.filter-dropdown{background:rgba(14,14,17,1)}.sticky-cta-overlay{background:rgba(0,0,0,.75)}.gallery-fav{background:rgba(0,0,0,.8)}.pd-lightbox{background:rgba(6,6,8,.98)}}
 @supports not (background:color-mix(in srgb,red 50%,blue)){.cta-toast-ico,.notif-ico{background:rgba(148,163,184,.16);border-color:rgba(148,163,184,.3)}.notif-card.is-unread{background:rgba(59,130,246,.07);border-color:rgba(59,130,246,.35)}}
 `;
 
@@ -1081,6 +1115,7 @@ body.sticky-cta-open{overflow:hidden}
       alerts: "Alerts",
       favorites: "Favorites",
       gallery: "Gallery",
+      categories: "Categories",
       profile: "Profile",
     },
     ar: {
@@ -1098,6 +1133,7 @@ body.sticky-cta-open{overflow:hidden}
       alerts: "التنبيهات",
       favorites: "المفضلة",
       gallery: "المعرض",
+      categories: "الفئات",
       profile: "الحساب",
     },
   };
@@ -1152,6 +1188,10 @@ body.sticky-cta-open{overflow:hidden}
         <span class="cta-tile-label" data-i18n="favorites">Favorites</span>
         <span class="cta-tile-badge" data-badge="favorites">0</span>
       </button>
+      <button type="button" class="cta-tile" data-target="categories">
+        <span class="cta-tile-ico"><i class="bi bi-diagram-3"></i></span>
+        <span class="cta-tile-label" data-i18n="categories">Categories</span>
+      </button>
       <button type="button" class="cta-tile" data-target="gallery">
         <span class="cta-tile-ico"><i class="bi bi-grid-3x3-gap"></i></span>
         <span class="cta-tile-label" data-i18n="gallery">Gallery</span>
@@ -1173,8 +1213,6 @@ body.sticky-cta-open{overflow:hidden}
       <div class="cta-metrics-sep"></div>
       <div class="cta-metric"><span class="mini-label" data-i18n="ordersCount">Orders</span><span class="cta-metric-value">2</span></div>
     </div>
-
-    
   </div>
 </div>`;
 
@@ -1207,9 +1245,12 @@ body.sticky-cta-open{overflow:hidden}
       <div id="ql-image-container" class="pd-gallery-track">
         ${p.images.map((u) => `<img src="${u}" class="ql-slide" loading="lazy" alt="${p.title}">`).join("")}
       </div>
+      <button type="button" class="pd-gallery-expand" onclick="openImageLightbox()" aria-label="Expand image">
+        <i class="bi bi-arrows-fullscreen"></i>
+      </button>
       <div class="pd-gallery-badge"><span id="image-counter">1/${p.images.length}</span></div>
     </div>
-    <div class="pd-progress"><div id="image-progress-bar" class="pd-progress-fill" style="width:0%"></div></div>
+    <div class="pd-dots" id="ql-dots"></div>
   </div>
 
   <div class="pd-info">
@@ -1435,36 +1476,31 @@ body.sticky-cta-open{overflow:hidden}
 </div>`;
   };
 
-  /* ── GALLERY (whole store) ── */
+  /* ── CATEGORIES ── */
+  T.categories = () => `
+<div class="sticky-view" data-view="categories">
+  <header class="view-head">
+    <div class="view-head-main">
+      <span class="view-eyebrow">Browse</span>
+      <h4 class="view-title">Store Categories</h4>
+    </div>
+    <span class="mini-pill" id="categoriesCountPill">0</span>
+  </header>
+  <div class="gallery-grid" id="categoriesGrid"></div>
+</div>`;
+
+  /* ── GALLERY (whole store / filtered) ── */
   T.gallery = () => `
 <div class="sticky-view" data-view="gallery">
   <header class="view-head">
     <div class="view-head-main">
       <span class="view-eyebrow">Browse</span>
-      <h4 class="view-title">Store Gallery</h4>
+      <h4 class="view-title" id="galleryTitle">Store Gallery</h4>
     </div>
-    <span class="mini-pill" id="galleryCountPill">${Object.keys(PRODUCTS).length} items</span>
+    <span class="mini-pill" id="galleryCountPill">0 items</span>
   </header>
-  <div class="gallery-grid" id="galleryGrid">
-    ${Object.values(PRODUCTS)
-      .map(
-        (p) => `
-      <button type="button" class="gallery-card" data-product="${p.id}">
-        <div class="gallery-thumb">
-          <img src="${p.images[0]}" alt="${p.title}" loading="lazy">
-          <span class="gallery-fav" data-fav-toggle="${p.id}" aria-label="Toggle favorite">
-            <i class="bi bi-heart"></i>
-          </span>
-        </div>
-        <div class="gallery-meta">
-          <span class="gallery-brand">${p.brand}</span>
-          <p class="gallery-title">${p.title}</p>
-          <span class="gallery-price">EGP ${p.price.toLocaleString()}</span>
-        </div>
-      </button>`,
-      )
-      .join("")}
-  </div>
+  <div class="gallery-filterbar" id="galleryFilterBar"></div>
+  <div class="gallery-grid" id="galleryGrid"></div>
 </div>`;
 
   /* ── FAVORITES ── */
@@ -1532,34 +1568,15 @@ body.sticky-cta-open{overflow:hidden}
     </div>
   </header>
   <div class="orders-filters">
-    <div class="filter" data-filter="order-status">
-      <button type="button" class="filter-trigger" aria-expanded="false">
-        <span class="filter-value"><span class="filter-selected">All statuses</span></span>
-        <i class="bi bi-chevron-down"></i>
-      </button>
-      <div class="filter-dropdown">
-        <div class="filter-options">
-          <button type="button" class="filter-option is-selected" data-value="all">All statuses</button>
-          <button type="button" class="filter-option" data-value="pending"><span class="status-dot pending"></span>Pending</button>
-          <button type="button" class="filter-option" data-value="processing"><span class="status-dot processing"></span>Processing</button>
-          <button type="button" class="filter-option" data-value="shipped"><span class="status-dot shipped"></span>Shipped</button>
-          <button type="button" class="filter-option" data-value="delivered"><span class="status-dot delivered"></span>Delivered</button>
-        </div>
-      </div>
-    </div>
-    <div class="filter" data-filter="payment">
-      <button type="button" class="filter-trigger" aria-expanded="false">
-        <span class="filter-value"><span class="filter-selected">All payments</span></span>
-        <i class="bi bi-chevron-down"></i>
-      </button>
-      <div class="filter-dropdown">
-        <div class="filter-options">
-          <button type="button" class="filter-option is-selected" data-value="all">All payments</button>
-          <button type="button" class="filter-option" data-value="cash">Cash</button>
-          <button type="button" class="filter-option" data-value="card">Card</button>
-          <button type="button" class="filter-option" data-value="wallet">E-Wallet</button>
-        </div>
-      </div>
+  
+    <div class="dropdop" 
+         data-optnum="3" 
+         data-selected="Order Status" 
+         data-type="search" 
+         data-style="outline" 
+         data-showcount="true" 
+         data-size="sm"
+         data-options="Pending,Accepted,Shipped,Canceled,Returned">
     </div>
   </div>
   <div class="orders-list" id="ordersList"></div>
@@ -1969,6 +1986,7 @@ body.sticky-cta-open{overflow:hidden}
     mount.innerHTML =
       T.hub() +
       T.quickLookShell() +
+      T.categories() +
       T.gallery() +
       T.favorites() +
       T.search() +
@@ -1985,6 +2003,7 @@ body.sticky-cta-open{overflow:hidden}
       lang: config.defaultLang,
       notifications: [],
       notificationSeq: 1,
+      galleryCategory: null,
     };
     window.__stickyState = state;
 
@@ -1999,6 +2018,7 @@ body.sticky-cta-open{overflow:hidden}
       const toggle = document.getElementById("stickyToggleBtn");
       const icon = document.getElementById("stickyToggleIcon");
       const backBtn = document.getElementById("stickyBackBtn");
+      const logoBtn = document.getElementById("stickyLogoBtn");
       const alertZone = document.getElementById("cta-alert-zone");
       const primaryCta = document.getElementById("stickyPrimaryCta");
 
@@ -2010,42 +2030,27 @@ body.sticky-cta-open{overflow:hidden}
       let isVisible = false;
       let current = "hub";
       let resizeTimer = null;
+      const navStack = []; // v2: remembers where you came from
 
-      /* Collapsed pill height in px (matches CSS clip-path offset) */
-      const COLLAPSED_H = 60;
-
-      /* Visible expanded card height — mirrors the CSS height on .sticky-cta */
-      function expandedHeight() {
-        return Math.min(window.innerHeight * 0.82, 720);
-      }
-
-      /* Bottom offset base — mirrors the CSS bottom value */
       function baseBottom() {
         return window.matchMedia("(max-width:480px)").matches ? 14 : 20;
       }
 
-      /* ──────────────────────────────────────────────────────────────
-   Alerts always sit just ABOVE the bottom bar (Sign in + Close).
-   Same position whether the CTA is expanded or collapsed.
-   ────────────────────────────────────────────────────────────── */
+      /* Toasts docked right above the bar (the blue-lined strip) */
       function positionAlertZone() {
         if (!alertZone) return;
 
-        const base = baseBottom(); // 20px desktop / 14px mobile
-        const BAR_H = 60; // .sticky-cta-bar height
-        const GAP = 10;
+        const base = baseBottom();
+        const BAR_H = 60;
+        const GAP = 6;
         const vh = window.innerHeight;
 
-        // Always pinned above the Sign-in / Close bar. When the CTA is hidden
-        // we fall back to the same resting position (just above the collapsed pill).
         const bottomPx = isVisible ? base + BAR_H + GAP : base + GAP;
-
-        // Never let toasts drift above the top ~120px of the viewport
         const clampedBottom = Math.min(bottomPx, vh - 120);
 
         alertZone.style.bottom =
           "calc(" + clampedBottom + "px + env(safe-area-inset-bottom, 0px))";
-        alertZone.style.width = "min(560px, calc(100vw - 32px))";
+        alertZone.style.width = "min(400px, calc(100vw - 32px))";
       }
 
       function setExpanded(v, nameHint) {
@@ -2084,7 +2089,7 @@ body.sticky-cta-open{overflow:hidden}
         requestAnimationFrame(positionAlertZone);
       }
 
-      function goTo(name, direction) {
+      function goTo(name, direction, record) {
         direction = direction || "right";
         if (name === current) {
           setExpanded(true);
@@ -2093,6 +2098,10 @@ body.sticky-cta-open{overflow:hidden}
         const from = views.find((v) => v.dataset.view === current);
         const to = views.find((v) => v.dataset.view === name);
         if (!to) return;
+
+        /* v2 — remember the trail so back returns to origin */
+        if (record !== false && direction === "right") navStack.push(current);
+        if (name === "hub") navStack.length = 0;
 
         sticky.dataset.current = name;
 
@@ -2239,7 +2248,7 @@ body.sticky-cta-open{overflow:hidden}
           .join("");
       }
 
-      /* ── Public API ── */
+      /* ── Public alert API ── */
       window.showAlert = function (type, message) {
         const entry = pushNotification(type, message);
         renderToast(entry);
@@ -2282,12 +2291,28 @@ body.sticky-cta-open{overflow:hidden}
         });
       });
 
+      /* Static platform logo button (left slot) */
+      logoBtn &&
+        logoBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          window.showAlert(
+            "info",
+            "🦚 Peacock Store — quick access on every page.",
+          );
+        });
+
+      /* Back button pops the nav stack first */
       backBtn &&
         backBtn.addEventListener("click", (e) => {
           e.preventDefault();
           e.stopPropagation();
-          if (current !== "hub") goTo("hub", "left");
-          else setExpanded(false);
+          if (current !== "hub") {
+            const prev = navStack.pop();
+            goTo(prev && prev !== current ? prev : "hub", "left", false);
+          } else {
+            setExpanded(false);
+          }
         });
 
       primaryCta &&
@@ -2302,7 +2327,8 @@ body.sticky-cta-open{overflow:hidden}
         if (isExpanded) {
           setExpanded(false);
           setTimeout(() => {
-            if (current !== "hub") goTo("hub", "left");
+            navStack.length = 0;
+            if (current !== "hub") goTo("hub", "left", false);
           }, 240);
         } else {
           showDock();
@@ -2314,7 +2340,8 @@ body.sticky-cta-open{overflow:hidden}
         overlay.addEventListener("click", () => {
           setExpanded(false);
           setTimeout(() => {
-            if (current !== "hub") goTo("hub", "left");
+            navStack.length = 0;
+            if (current !== "hub") goTo("hub", "left", false);
           }, 240);
         });
 
@@ -2324,13 +2351,14 @@ body.sticky-cta-open{overflow:hidden}
         if (alertZone && alertZone.contains(e.target)) return;
         setExpanded(false);
         setTimeout(() => {
-          if (current !== "hub") goTo("hub", "left");
+          navStack.length = 0;
+          if (current !== "hub") goTo("hub", "left", false);
         }, 240);
       });
 
       document.addEventListener("keydown", (e) => {
         if (e.key !== "Escape") return;
-        if (current !== "hub") goTo("hub", "left");
+        if (current !== "hub") goTo("hub", "left", false);
         else if (isExpanded) setExpanded(false);
         else hideDock();
       });
@@ -2374,7 +2402,10 @@ body.sticky-cta-open{overflow:hidden}
       window.closeStickyCta = () => setExpanded(false);
       window.hideStickyCta = hideDock;
       window.showStickyCta = showDock;
-      window.closeAllViews = () => goTo("hub", "left");
+      window.closeAllViews = () => {
+        navStack.length = 0;
+        goTo("hub", "left", false);
+      };
 
       window.openCart = (e) => {
         e && e.preventDefault();
@@ -2403,6 +2434,10 @@ body.sticky-cta-open{overflow:hidden}
       window.openFavorites = (e) => {
         e && e.preventDefault();
         window.openStickyView("favorites");
+      };
+      window.openCategories = (e) => {
+        e && e.preventDefault();
+        window.openStickyView("categories");
       };
 
       window.applyHubPromo = function (code) {
@@ -2444,29 +2479,60 @@ body.sticky-cta-open{overflow:hidden}
        ══════════════════════════════════════════════════════════════════ */
     let CURRENT_PRODUCT = null;
     let CURRENT_REVIEW_RATING = 0;
+    let qlIndex = 0; // v2: active gallery image
 
     function bindQuickLook(product) {
       const container = document.getElementById("ql-image-container");
       const counter = document.getElementById("image-counter");
-      const progress = document.getElementById("image-progress-bar");
-      if (!container || !counter || !progress) return;
+      const dotsWrap = document.getElementById("ql-dots");
+      if (!container) return;
 
       const total = container.children.length;
-      counter.textContent = "1/" + total;
-      progress.style.width = "0%";
+      qlIndex = 0;
+      if (counter) counter.textContent = "1/" + total;
+
+      /* v2 — one dot per image */
+      function paintDots(active) {
+        if (!dotsWrap) return;
+        dotsWrap.innerHTML = Array.from(
+          { length: total },
+          (_, i) =>
+            '<button type="button" class="pd-dot' +
+            (i === active ? " is-active" : "") +
+            '" data-index="' +
+            i +
+            '" aria-label="Image ' +
+            (i + 1) +
+            '"></button>',
+        ).join("");
+      }
+      paintDots(0);
+
+      if (dotsWrap) {
+        dotsWrap.addEventListener("click", (e) => {
+          const b = e.target.closest(".pd-dot");
+          if (!b) return;
+          const slide = container.children[parseInt(b.dataset.index, 10) || 0];
+          if (slide)
+            container.scrollTo({ left: slide.offsetLeft, behavior: "smooth" });
+        });
+      }
 
       container.addEventListener(
         "scroll",
         function () {
-          const maxScroll = this.scrollWidth - this.clientWidth;
-          const percent =
-            maxScroll > 0 ? (this.scrollLeft / maxScroll) * 100 : 0;
-          progress.style.width = percent + "%";
-          const idx =
-            total > 1
-              ? Math.round((this.scrollLeft / maxScroll) * (total - 1)) + 1
-              : 1;
-          counter.textContent = Math.min(idx, total) + "/" + total;
+          const w = this.clientWidth || 1;
+          const idx = Math.max(
+            0,
+            Math.min(total - 1, Math.round(this.scrollLeft / w)),
+          );
+          if (idx === qlIndex) return;
+          qlIndex = idx;
+          if (counter) counter.textContent = idx + 1 + "/" + total;
+          if (dotsWrap)
+            dotsWrap
+              .querySelectorAll(".pd-dot")
+              .forEach((d, i) => d.classList.toggle("is-active", i === idx));
         },
         { passive: true },
       );
@@ -2509,6 +2575,114 @@ body.sticky-cta-open{overflow:hidden}
       const form = document.getElementById("review-form-panel");
       if (form) form.classList.remove("is-open");
     }
+
+    /* ── v2: fullscreen image lightbox ── */
+    function ensureLightbox() {
+      if (document.getElementById("pdLightbox")) return;
+
+      const el = document.createElement("div");
+      el.id = "pdLightbox";
+      el.className = "pd-lightbox";
+      el.innerHTML =
+        '<button type="button" class="pd-lightbox-close" id="pdLightboxClose" aria-label="Close">' +
+        '<i class="bi bi-x-lg"></i></button>' +
+        '<div class="pd-lightbox-frame">' +
+        '<div class="pd-lightbox-track" id="pdLightboxTrack"></div>' +
+        '<span class="pd-lightbox-counter" id="pdLightboxCounter">1/1</span>' +
+        "</div>" +
+        '<div class="pd-dots" id="pdLightboxDots"></div>';
+      document.body.appendChild(el);
+
+      el.addEventListener("click", (e) => {
+        if (e.target === el) closeLightbox();
+      });
+      el.querySelector("#pdLightboxClose").addEventListener(
+        "click",
+        closeLightbox,
+      );
+
+      const track = el.querySelector("#pdLightboxTrack");
+      track.addEventListener(
+        "scroll",
+        () => {
+          const total = track.children.length || 1;
+          const w = track.clientWidth || 1;
+          const idx = Math.max(
+            0,
+            Math.min(total - 1, Math.round(track.scrollLeft / w)),
+          );
+          const c = el.querySelector("#pdLightboxCounter");
+          if (c) c.textContent = idx + 1 + "/" + total;
+          el.querySelectorAll("#pdLightboxDots .pd-dot").forEach((d, i) =>
+            d.classList.toggle("is-active", i === idx),
+          );
+        },
+        { passive: true },
+      );
+
+      el.querySelector("#pdLightboxDots").addEventListener("click", (e) => {
+        const b = e.target.closest(".pd-dot");
+        if (!b) return;
+        const slide = track.children[parseInt(b.dataset.index, 10) || 0];
+        if (slide)
+          track.scrollTo({ left: slide.offsetLeft, behavior: "smooth" });
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && el.classList.contains("is-open"))
+          closeLightbox();
+      });
+    }
+
+    function closeLightbox() {
+      const el = document.getElementById("pdLightbox");
+      if (el) el.classList.remove("is-open");
+    }
+
+    window.openImageLightbox = function () {
+      if (!CURRENT_PRODUCT) return;
+      ensureLightbox();
+
+      const el = document.getElementById("pdLightbox");
+      const track = document.getElementById("pdLightboxTrack");
+      const dots = document.getElementById("pdLightboxDots");
+      const counter = document.getElementById("pdLightboxCounter");
+      const imgs = CURRENT_PRODUCT.images;
+      const total = imgs.length;
+
+      track.innerHTML = imgs
+        .map(
+          (u, i) =>
+            '<img class="pd-lightbox-slide" src="' +
+            u +
+            '" alt="' +
+            CURRENT_PRODUCT.title +
+            " " +
+            (i + 1) +
+            '">',
+        )
+        .join("");
+
+      dots.innerHTML = Array.from(
+        { length: total },
+        (_, i) =>
+          '<button type="button" class="pd-dot' +
+          (i === qlIndex ? " is-active" : "") +
+          '" data-index="' +
+          i +
+          '"></button>',
+      ).join("");
+
+      if (counter) counter.textContent = qlIndex + 1 + "/" + total;
+
+      el.classList.add("is-open");
+      requestAnimationFrame(() => {
+        const slide = track.children[qlIndex];
+        if (slide) track.scrollLeft = slide.offsetLeft;
+      });
+    };
+
+    window.closeImageLightbox = closeLightbox;
 
     window.openQuickLook = function (productId) {
       const product = PRODUCTS[productId] || PRODUCTS.PROD_001;
@@ -2631,7 +2805,6 @@ body.sticky-cta-open{overflow:hidden}
       if (isFav) state.favorites.delete(productId);
       else state.favorites.add(productId);
 
-      // Update any visible heart toggles
       document
         .querySelectorAll('[data-fav-toggle="' + productId + '"]')
         .forEach((el) => {
@@ -2693,13 +2866,19 @@ body.sticky-cta-open{overflow:hidden}
         .join("");
     }
 
-    /* Delegate card + heart taps inside gallery + favorites */
+    /* Delegate card + heart taps inside gallery + favorites + categories */
     mount.addEventListener("click", (e) => {
       const favBtn = e.target.closest("[data-fav-toggle]");
       if (favBtn) {
         e.stopPropagation();
         e.preventDefault();
         window.toggleFavorite(favBtn.dataset.favToggle);
+        return;
+      }
+      const catCard = e.target.closest(".gallery-card[data-category]");
+      if (catCard) {
+        e.preventDefault();
+        window.openCategory(catCard.dataset.category);
         return;
       }
       const card = e.target.closest(".gallery-card[data-product]");
@@ -2709,9 +2888,122 @@ body.sticky-cta-open{overflow:hidden}
       }
     });
 
+    /* ══════════════════════════════════════════════════════════════════
+       v2 · CATEGORIES + FILTERED GALLERY
+       ══════════════════════════════════════════════════════════════════ */
+    function getStoreCategories() {
+      const map = new Map();
+      Object.values(PRODUCTS).forEach((p) => {
+        if (!map.has(p.category)) {
+          map.set(p.category, {
+            name: p.category,
+            count: 0,
+            image: p.images[0],
+            brands: new Set(),
+          });
+        }
+        const c = map.get(p.category);
+        c.count++;
+        c.brands.add(p.brand);
+      });
+      return Array.from(map.values()).sort((a, b) => b.count - a.count);
+    }
+
+    window.renderCategories = function () {
+      const grid = document.getElementById("categoriesGrid");
+      if (!grid) return;
+      const cats = getStoreCategories();
+      const pill = document.getElementById("categoriesCountPill");
+      if (pill) pill.textContent = cats.length + " categories";
+
+      grid.innerHTML = cats
+        .map(
+          (c) => `
+        <button type="button" class="gallery-card" data-category="${c.name}">
+          <div class="gallery-thumb">
+            <img src="${c.image}" alt="${c.name}" loading="lazy">
+            <span class="category-count">${c.count} item${c.count === 1 ? "" : "s"}</span>
+          </div>
+          <div class="gallery-meta">
+            <span class="gallery-brand">${Array.from(c.brands).join(" · ")}</span>
+            <p class="gallery-title">${c.name}</p>
+          </div>
+        </button>`,
+        )
+        .join("");
+    };
+
+    window.renderGallery = function () {
+      const grid = document.getElementById("galleryGrid");
+      if (!grid) return;
+
+      const filter = state.galleryCategory;
+      const items = Object.values(PRODUCTS).filter(
+        (p) => !filter || p.category === filter,
+      );
+
+      const title = document.getElementById("galleryTitle");
+      const pill = document.getElementById("galleryCountPill");
+      const bar = document.getElementById("galleryFilterBar");
+
+      if (title) title.textContent = filter ? filter : "Store Gallery";
+      if (pill) pill.textContent = items.length + " items";
+      if (bar) {
+        bar.innerHTML = filter
+          ? '<button type="button" class="gallery-chip" onclick="clearGalleryFilter()">' +
+            "<span>" +
+            filter +
+            "</span>" +
+            '<i class="bi bi-x-lg"></i></button>'
+          : "";
+      }
+
+      if (!items.length) {
+        grid.innerHTML =
+          '<div class="search-empty" style="grid-column:1/-1">' +
+          '<div class="search-empty-ico"><i class="bi bi-bag"></i></div>' +
+          "<p>Nothing here yet</p><small>Try another category</small></div>";
+        return;
+      }
+
+      grid.innerHTML = items
+        .map(
+          (p) => `
+        <button type="button" class="gallery-card" data-product="${p.id}">
+          <div class="gallery-thumb">
+            <img src="${p.images[0]}" alt="${p.title}" loading="lazy">
+            <span class="gallery-fav${state.favorites.has(p.id) ? " is-on" : ""}"
+                  data-fav-toggle="${p.id}" aria-label="Toggle favorite">
+              <i class="bi bi-heart"></i>
+            </span>
+          </div>
+          <div class="gallery-meta">
+            <span class="gallery-brand">${p.brand}</span>
+            <p class="gallery-title">${p.title}</p>
+            <span class="gallery-price">EGP ${p.price.toLocaleString()}</span>
+          </div>
+        </button>`,
+        )
+        .join("");
+    };
+
+    window.openCategory = function (name) {
+      state.galleryCategory = name;
+      window.renderGallery();
+      window.openStickyView("gallery");
+    };
+
+    window.clearGalleryFilter = function () {
+      state.galleryCategory = null;
+      window.renderGallery();
+    };
+
     /* Paint initial state */
     updateFavBadge();
     renderFavorites();
+    window.renderCategories();
+    window.renderGallery();
+
     document.querySelectorAll("[data-fav-toggle]").forEach((el) => {
       el.classList.toggle("is-on", state.favorites.has(el.dataset.favToggle));
     });
@@ -3659,11 +3951,15 @@ body.sticky-cta-open{overflow:hidden}
       setLanguage: applyLanguage,
       toggleLanguage: window.toggleLanguage,
       getState: () => state,
+      openLightbox: () => window.openImageLightbox(),
+      closeLightbox: () => window.closeImageLightbox(),
       destroy() {
         const r = document.getElementById(ROOT_ID);
         if (r) r.remove();
         const s = document.getElementById(STYLE_ID);
         if (s) s.remove();
+        const lb = document.getElementById("pdLightbox");
+        if (lb) lb.remove();
         delete window.__stickyCtaApi;
       },
     };
