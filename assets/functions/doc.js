@@ -138,7 +138,7 @@ body.sticky-cta-open{overflow:hidden}
 .status-dot.shipped{background:#8b5cf6}
 .status-dot.delivered{background:#10b981}
 .pd-layout{display:flex;flex-direction:column;gap:14px}
-.pd-gallery-frame{position:relative;width:100%;aspect-ratio:16/11;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)}
+.pd-gallery-frame{position:relative;width:100%;aspect-ratio:12/11;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)}
 .pd-gallery-track{display:flex;height:100%;width:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
 .pd-gallery-track::-webkit-scrollbar{display:none}
 .ql-slide{width:100%;height:100%;object-fit:cover;flex-shrink:0;scroll-snap-align:center}

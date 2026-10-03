@@ -176,9 +176,19 @@
     <!-- ═══════════════════════════════════════════════════════════
        MAIN CONTENT
        ═══════════════════════════════════════════════════════════ -->
-    <main class="matager-customer-shell flex flex-col items-center" style="
-    /* width: max-content; */
-">
+    <main class="matager-customer-shell flex flex-col items-center">
+
+        <!-- 9. Color Dropdown with Search -->
+        <div class="dropdop" data-optnum="3" data-selected="Select Color" data-type="color-search" data-style="outline"
+            data-showcount="true" data-options="Red,Blue,Green,Black,White,Yellow,Purple,Pink">
+        </div>
+
+        <!-- 10. Material Dropdown WITH Search (Background Images) -->
+        <!-- 'material-search' uses the format OptionName:ImageURL -->
+        <div class="dropdop" data-optnum="3" data-selected="Select Material" data-type="material-search"
+            data-style="outline" data-showcount="true"
+            data-options="Wood:https://tse4.mm.bing.net/th/id/OIP.uv7qSos89CNQVrcq0BJNGwHaEJ?r=0&rs=1&pid=ImgDetMain&o=7&rm=3,Leather:https://images.unsplash.com/photo-1473188588951-666fce8e7c68?w=50&h=50&fit=crop,Denim:https://images.unsplash.com/photo-1542272604-787c3835535d?w=50&h=50&fit=crop,Silk:https://images.unsplash.com/photo-1580146362170-01818e23ae0a?w=50&h=50&fit=crop,Cotton:https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=50&h=50&fit=crop">
+        </div>
 
         <!-- ★ Top bar: Gender filter + Language button -->
 
@@ -261,7 +271,7 @@
 
                 <!-- ★ Switcher area (Inside the glass panel, above the product header) -->
                 <div class="flex items-center gap-3 pb-4" style="display:flex;justify-content: space-between;">
-                    <div class="flex gap-4 mb-2 mt-2 pt-2 overflow-scroll" id="category-switcher">
+                    <div class="flex gap-4 mb-2 mt-2 pt-2 " id="category-switcher">
                         <div class="dropdop" data-optnum="3" data-selected="Limited Items" data-type="standard"
                             data-showcount="true" data-size="sm" data-style="outline"
                             data-options="Limited Items,Clearance,Last Chance,Exclusive">
